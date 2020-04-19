@@ -93,21 +93,28 @@ window.addEventListener('DOMContentLoaded', function () {
   setClock('timer', deadline);
 
   //modal window
+  function showModal(btn) {
+    let buttons = document.querySelectorAll(btn),
+      overlay = document.querySelector('.overlay'),
+      close = document.querySelector('.popup-close');
 
-  let more = document.querySelector('.more'),
-    overlay = document.querySelector('.overlay'),
-    close = document.querySelector('.popup-close');
+    for (let i = 0; i < buttons.length; i++) {
+      buttons[i].addEventListener('click', function () {
+        overlay.style.display = 'block';
+        this.classList.add('more-splash');
+        document.body.style.overflow = 'hidden';
+      });
 
-  more.addEventListener('click', function () {
-    overlay.style.display = 'block';
-    this.classList.add('more-splash');
-    document.body.style.overflow = 'hidden';
-  });
+      close.addEventListener('click', function () {
+        overlay.style.display = 'none';
+        buttons[i].classList.remove('more-splash');
+        document.body.style.overflow = '';
+      });
+    };
 
-  close.addEventListener('click', function () {
-    overlay.style.display = 'none';
-    more.classList.remove('more-splash');
-    document.body.style.overflow = '';
-  });
+  };
+
+  showModal('.description-btn');
+  showModal('.more');
 
 });
