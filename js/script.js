@@ -130,40 +130,87 @@ window.addEventListener('DOMContentLoaded', function () {
     statusMessage = document.createElement('div');
 
   statusMessage.classList.add('status');
-  form.addEventListener('submit', function (event) {
-    event.preventDefault();
-    form.appendChild(statusMessage);
 
-    let request = new XMLHttpRequest();
-    request.open('POST', 'server.php');
-    // request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); - заголовок обычной формы
-    request.setRequestHeader('Content-Type', 'aplication/json; charset=utf-8'); //JSON
+  function sendForm(elem) {
+    elem.addEventListener('submit', function (e) {
+      e.preventDefault();
+      elem.appendChild(statusMessage);
 
-    let formData = new FormData(form);
+      let formData = new FormData(elem);
 
-    let obj = {};
-    formData.forEach(function (value, key) {
-      obj[key] = value;
-    });
+      function postData(data) {
+        return new Promise(function (resolve, reject) {
+          let request = new XMLHttpRequest();
 
-    let json = JSON.stringify(obj);
+          request.open('POST', 'server.php');
+          // request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); - заголовок обычной формы
+          request.setRequestHeader('Content-Type', 'aplication/json; charset=utf-8'); //JSON
 
-    request.send(json);
+          request.onreadystatechange = function () {
+            if (request.readyState < 4) {
+              resolve();
+            } else if (request.readyState === 4) {
+              if (request.status == 200 && request.status < 3) {
+                resolve();
+              } else {
+                reject();
+              }
+            }
+          };
 
-    request.addEventListener('readystatechange', function () {
-      if (request.readyState < 4) {
-        statusMessage.textContent = message.loading;
-      } else if (request.readyState === 4 && request.status == 200) {
-        statusMessage.textContent = message.success;
-      } else {
-        statusMessage.textContent = message.failure;
+          request.send(data);
+        });
+      } //end post data
+
+      function clearInput() {
+        for (let i = 0; i < input.length; i++) {
+          input[i].value = '';
+        }
       }
+
+      postData(formData)
+        .then(() => statusMessage.textContent = message.loading)
+        .then(() => statusMessage.textContent = message.success)
+        .catch(() => statusMessage.textContent = message.failure)
+        .then(clearInput)
+
     });
+  }
 
-    for (let i = 0; i < input.length; i++) {
-      input[i].value = '';
-    }
+  sendForm(form);
 
-  });
+  // form.addEventListener('submit', function (event) {
+  //   event.preventDefault();
+  //   form.appendChild(statusMessage);
+
+  //   let request = new XMLHttpRequest();
+  //   request.open('POST', 'server.php');
+  //   // request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); - заголовок обычной формы
+  //   request.setRequestHeader('Content-Type', 'aplication/json; charset=utf-8'); //JSON
+
+  //   let formData = new FormData(form);
+
+  //   let obj = {};
+  //   formData.forEach(function (value, key) {
+  //     obj[key] = value;
+  //   });
+
+  //   let json = JSON.stringify(obj);
+
+  //   request.send(json);
+
+  //   request.addEventListener('readystatechange', function () {
+  //     if (request.readyState < 4) {
+  //       statusMessage.textContent = message.loading;
+  //     } else if (request.readyState === 4 && request.status == 200) {
+  //       statusMessage.textContent = message.success;
+  //     } else {
+  //       statusMessage.textContent = message.failure;
+  //     }
+  //   });
+
+
+
+  // });
 
 });
