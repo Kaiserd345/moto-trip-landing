@@ -179,38 +179,62 @@ window.addEventListener('DOMContentLoaded', function () {
 
   sendForm(form);
 
-  // form.addEventListener('submit', function (event) {
-  //   event.preventDefault();
-  //   form.appendChild(statusMessage);
+  //slider
 
-  //   let request = new XMLHttpRequest();
-  //   request.open('POST', 'server.php');
-  //   // request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); - заголовок обычной формы
-  //   request.setRequestHeader('Content-Type', 'aplication/json; charset=utf-8'); //JSON
+  let slideIndex = 1,
+    slides = document.querySelectorAll('.slider-item'),
+    prev = document.querySelector('.prev'),
+    next = document.querySelector('.next'),
+    dotsWrap = document.querySelector('.slider-dots'),
+    dots = document.querySelectorAll('.dot');
 
-  //   let formData = new FormData(form);
+  showSlides(slideIndex);
 
-  //   let obj = {};
-  //   formData.forEach(function (value, key) {
-  //     obj[key] = value;
-  //   });
+  function showSlides(n) {
 
-  //   let json = JSON.stringify(obj);
+    if (n > slides.length) {
+      slideIndex = 1;
+    }
+    if (n < 1) {
+      slideIndex = slides.length;
+    }
 
-  //   request.send(json);
+    slides.forEach((item) => item.style.display = 'none');
+    // for (let i = 0; i < slides.length(); i++) {
+    //   slides[i].style.display = 'none';
+    // }
 
-  //   request.addEventListener('readystatechange', function () {
-  //     if (request.readyState < 4) {
-  //       statusMessage.textContent = message.loading;
-  //     } else if (request.readyState === 4 && request.status == 200) {
-  //       statusMessage.textContent = message.success;
-  //     } else {
-  //       statusMessage.textContent = message.failure;
-  //     }
-  //   });
+    dots.forEach((item) => item.classList.remove('dot-active'));
+    slides[slideIndex - 1].style.display = 'block';
+    dots[slideIndex - 1].classList.add('dot-active');
 
+  }
 
+  function plusSlides(n) {
+    showSlides(slideIndex += n);
+  }
 
-  // });
+  function currentSlide(n) {
+    showSlides(slideIndex = n);
+  }
+
+  prev.addEventListener('click', function () {
+    plusSlides(-1);
+  });
+
+  next.addEventListener('click', function () {
+    plusSlides(1);
+  });
+
+  dotsWrap.addEventListener('click', function (event) {
+    for (let i = 0; i < dots.length + 1; i++) {
+      if (event.target.classList.contains('dot') && event.target == dots[i - 1]) {
+        currentSlide(i);
+      }
+    }
+  });
+
+  // calculator
+
 
 });
